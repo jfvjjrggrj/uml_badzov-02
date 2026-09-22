@@ -1,0 +1,15 @@
+@startuml
+!include ../../_style.puml
+
+actor Читатель as r
+participant "Витрина" as ui
+participant "API" as api
+database "БД" as db
+
+r -> ui : найти("Кнут")
+ui -> api : GET /search?q=Кнут
+api -> db : SELECT ...
+db -> api : список книг
+api -> ui : JSON
+ui -> r : результаты
+@enduml

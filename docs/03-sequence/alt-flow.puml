@@ -1,0 +1,41 @@
+@startuml
+!include ../../_style.puml
+title ВИ-03 «Выдать книгу»: исключения
+
+actor "Библиотекарь" as lib
+participant "АРМ абонемента" as ui
+participant "CirculationService" as svc
+database "БД" as db
+queue "Очередь событий" as bus
+
+lib -> ui : сканировать(билет, инвентарный номер)
+activate ui
+ui -> svc : выдать(читатель, экземпляр)
+activate svc
+
+alt билет просрочен
+  svc --> ui : отказ: билет недействителен
+else лимит книг исчерпан
+  svc -> db : SELECT активные выдачи
+  db --> svc : список из 5 книг
+  svc --> ui : отказ: сдайте книгу
+else экземпляр забронирован другим
+  svc -> db : SELECT бронь
+  db --> svc : бронь до 06.09.2026
+  svc --> ui : отказ: бронь до 06.09.2026
+else экземпляр списан
+  svc --> ui : отказ: экземпляр списан
+else выдача возможна
+  loop для каждой проверки правил
+    svc -> svc : проверитьПравило()
+  end
+  svc -> db : INSERT loan
+  db --> svc : id
+  svc ->> bus : LoanCreated
+  svc --> ui : Выдача
+end
+
+deactivate svc
+ui --> lib : результат
+deactivate ui
+@enduml

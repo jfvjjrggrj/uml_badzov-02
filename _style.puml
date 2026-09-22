@@ -1,0 +1,56 @@
+
+
+<style>
+element {
+    FontName "Segoe UI"
+    FontSize 13
+    FontColor #333333
+}
+
+rectangle {
+    BackgroundColor #FDF6E3
+    LineColor #B58900
+    RoundCorner 10
+}
+
+note {
+    BackgroundColor #FFF9C4
+    LineColor #FBC02D
+}
+
+actor {
+    BackgroundColor #E3F2FD
+    LineColor #1976D2
+    FontColor #0D47A1
+}
+
+usecase {
+    BackgroundColor #E8F5E9
+    LineColor #43A047
+    FontColor #1B5E20
+}
+
+class {
+    BackgroundColor #FFFFFF
+    LineColor #1976D2
+    FontColor #0D47A1
+}
+
+package {
+    BackgroundColor #FAFAFA
+    LineColor #B58900
+    FontColor #333333
+}
+
+enum {
+    BackgroundColor #FFF3E0
+    LineColor #FB8C00
+    FontColor #E65100
+}
+
+object {
+    BackgroundColor #FFFFFF
+    LineColor #1976D2
+    FontColor #0D47A1
+}
+</style>

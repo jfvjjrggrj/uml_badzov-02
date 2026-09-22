@@ -1,0 +1,35 @@
+@startuml
+!include ../../_style.puml
+left to right direction
+
+actor "Читатель" as reader
+actor "Библиотекарь" as lib
+actor "Каталог РГБ" as rgb <<system>>
+
+rectangle "ИС библиотеки" {
+  usecase "Найти книгу" as UC_find
+  usecase "Забронировать книгу" as UC_hold
+  usecase "Выдать книгу" as UC_issue
+  usecase "Принять возврат" as UC_return
+  usecase "Начислить пеню" as UC_fine
+  usecase "Списать фонд" as UC_writeoff
+  usecase "Импортировать библиографию" as UC_import
+  usecase "Проверить читательский билет" as UC_check
+  usecase "Проверить лимит книг" as UC_limit
+}
+
+reader -- UC_find
+reader -- UC_hold
+lib -- UC_issue
+lib -- UC_return
+lib -- UC_writeoff
+rgb -- UC_import
+
+UC_issue ..> UC_check : <<include>>
+UC_issue ..> UC_limit : <<include>>
+UC_return ..> UC_check : <<include>>
+UC_hold ..> UC_check : <<include>>
+
+UC_fine ..> UC_return : <<extend>>
+UC_writeoff ..> UC_import : <<extend>>
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+!include ../../_style.puml
+title Диаграмма коммуникации: ВИ-03 «Выдать книгу»
+
+object "<u>:Библиотекарь</u>" as lib
+object "<u>ui : АРМ абонемента</u>" as ui
+object "<u>svc : CirculationService</u>" as svc
+object "<u>policy : ПолитикаВыдачи</u>" as policy
+object "<u>db : БД</u>" as db
+
+lib -- ui : 1: сканировать(билет) >
+ui -- svc : 2: найтиЧитателя(билет) >
+svc -- db : 2.1: SELECT reader >
+db -- svc : 2.2: Читатель <
+svc -- ui : 3: карточка читателя <
+lib -- ui : 4: сканировать(инвентарный номер) >
+ui -- svc : 5: выдать(читатель, экземпляр) >
+svc -- policy : 5.1: лимитДля(читатель) >
+policy -- svc : 5.2: 5 <
+svc -- db : 5.3: COUNT активных выдач >
+db -- svc : 5.4: 2 <
+svc -- db : 5.5: INSERT loan >
+db -- svc : 5.6: id <
+svc -- ui : 6: Выдача <
+ui -- lib : 7: срок возврата 18.09.2026 <
+@enduml

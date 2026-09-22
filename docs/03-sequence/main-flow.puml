@@ -1,0 +1,43 @@
+@startuml
+!include ../../_style.puml
+title ВИ-03 «Выдать книгу»: основной сценарий
+
+actor "Библиотекарь" as lib
+participant "АРМ абонемента" as ui
+participant "CirculationService" as svc
+participant "ПолитикаВыдачи" as policy
+database "БД" as db
+
+lib -> ui : сканировать(читательский билет)
+activate ui
+ui -> svc : найтиЧитателя(билет)
+activate svc
+svc -> db : SELECT reader
+db --> svc : Читатель
+svc --> ui : карточка читателя
+deactivate svc
+
+lib -> ui : сканировать(инвентарный номер)
+ui -> svc : выдать(читатель, экземпляр)
+activate svc
+
+svc -> policy : лимитДля(читатель)
+policy --> svc : 5
+
+svc -> db : COUNT активных выдач
+db --> svc : 2
+
+svc -> db : SELECT бронь на экземпляр
+db --> svc : нет активной брони
+
+opt лимит не исчерпан и брони нет
+  svc -> db : INSERT loan
+  db --> svc : id
+  svc -> db : UPDATE экземпляр SET состояние = НА_РУКАХ
+end
+
+svc --> ui : Выдача
+deactivate svc
+ui --> lib : срок возврата 18.09.2026
+deactivate ui
+@enduml

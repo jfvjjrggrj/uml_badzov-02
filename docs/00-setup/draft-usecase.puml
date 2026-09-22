@@ -1,0 +1,17 @@
+@startuml
+!include ../..//_style.puml
+left to right direction
+
+actor "Читатель" as reader
+actor "Библиотекарь" as lib
+
+rectangle "ИС библиотеки" {
+  usecase "Найти книгу" as UC1
+  usecase "Забронировать" as UC2
+  usecase "Выдать книгу" as UC3
+}
+
+reader -- UC1
+reader -- UC2
+lib -- UC3
+@enduml
