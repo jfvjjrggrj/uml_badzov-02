@@ -1,0 +1,37 @@
+@startuml
+title Диаграмма развёртывания (UML): ИС библиотеки
+
+node "Рабочее место читателя" {
+  artifact "Браузер"
+}
+node "Рабочее место библиотекаря" {
+  artifact "АРМ.exe"
+}
+
+node "Kubernetes-кластер" {
+  node "Pod: api (x3)" {
+    artifact "library-api.jar"
+  }
+  node "Pod: worker (x1)" {
+    artifact "library-worker.jar"
+  }
+}
+
+node "Сервер БД" {
+  database "PostgreSQL 16"
+}
+node "Кластер поиска" {
+  database "OpenSearch 2.x"
+}
+node "Брокер сообщений" {
+  queue "RabbitMQ 3.13"
+}
+
+"Браузер" ..> "library-api.jar" : HTTPS/443
+"АРМ.exe" ..> "library-api.jar" : HTTPS/443
+"library-api.jar" ..> "PostgreSQL 16" : JDBC/5432
+"library-api.jar" ..> "OpenSearch 2.x" : HTTP/9200
+"library-api.jar" ..> "RabbitMQ 3.13" : AMQP/5672
+"library-worker.jar" ..> "PostgreSQL 16" : JDBC/5432
+"library-worker.jar" ..> "RabbitMQ 3.13" : AMQP/5672
+@enduml

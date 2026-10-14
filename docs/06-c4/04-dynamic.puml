@@ -1,0 +1,19 @@
+@startuml
+!include <C4/C4_Dynamic>
+title Динамический вид C4: сценарий «Выдача книги»
+
+Person(librarian, "Библиотекарь")
+Container(desk, "АРМ библиотекаря", ".NET")
+Container(api, "Backend API", "Spring Boot")
+ContainerDb(db, "Основная БД", "PostgreSQL")
+ContainerQueue(bus, "Очередь событий", "RabbitMQ")
+Container(worker, "Планировщик", "Kotlin")
+
+RelIndex(1, librarian, desk, "Сканирует билет и штрихкод")
+RelIndex(2, desk, api, "POST /loans", "JSON/HTTPS")
+RelIndex(3, api, db, "Проверяет лимит и статус экземпляра")
+RelIndex(4, api, db, "Создаёт запись Loan")
+RelIndex(5, api, bus, "Публикует LoanCreated")
+RelIndex(6, bus, worker, "Доставляет событие")
+RelIndex(7, worker, db, "Ставит напоминание за 3 дня")
+@enduml

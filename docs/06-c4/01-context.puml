@@ -1,0 +1,21 @@
+@startuml
+!include <C4/C4_Context>
+title Уровень 1 — System Context: ИС библиотеки
+
+Person(reader, "Читатель", "Ищет и бронирует книги")
+Person(librarian, "Библиотекарь", "Выдаёт книги, ведёт фонд")
+
+System(lms, "ИС библиотеки", "Каталог, выдачи, брони, учёт фонда, пени, списание")
+
+System_Ext(rgb, "Каталог РГБ", "Внешний библиографический источник")
+System_Ext(sms, "SMS-шлюз", "Уведомления о сроках возврата")
+System_Ext(sso, "SSO вуза", "Единая аутентификация студентов и сотрудников")
+
+Rel(reader, lms, "Ищет и бронирует книги", "HTTPS")
+Rel(librarian, lms, "Ведёт выдачи и фонд", "HTTPS")
+Rel(lms, rgb, "Импортирует библиографию", "HTTPS/OAI-PMH")
+Rel(lms, sms, "Шлёт напоминания", "HTTPS")
+Rel(lms, sso, "Проверяет учётные записи", "OIDC")
+
+SHOW_LEGEND()
+@enduml

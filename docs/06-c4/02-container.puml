@@ -1,0 +1,36 @@
+@startuml
+!include <C4/C4_Container>
+title Уровень 2 — Containers: ИС библиотеки
+
+Person(reader, "Читатель")
+Person(librarian, "Библиотекарь")
+
+System_Ext(rgb, "Каталог РГБ")
+System_Ext(sms, "SMS-шлюз")
+System_Ext(sso, "SSO вуза")
+
+System_Boundary(lms, "ИС библиотеки") {
+  Container(spa, "Веб-клиент", "React", "Каталог, личный кабинет, брони")
+  Container(desk, "АРМ библиотекаря", "Desktop, .NET", "Выдача, возврат, приём в фонд")
+  Container(api, "Backend API", "Kotlin / Spring Boot", "Бизнес-логика, REST")
+  Container(worker, "Планировщик", "Kotlin", "Напоминания, начисление пеней")
+  ContainerDb(db, "Основная БД", "PostgreSQL", "Книги, экземпляры, выдачи, читатели")
+  ContainerDb(search, "Поисковый индекс", "OpenSearch", "Полнотекстовый поиск")
+  ContainerQueue(bus, "Очередь событий", "RabbitMQ", "Доменные события")
+}
+
+Rel(reader, spa, "Пользуется", "HTTPS")
+Rel(librarian, desk, "Пользуется", "HTTPS")
+Rel(spa, api, "Вызывает", "JSON/HTTPS")
+Rel(desk, api, "Вызывает", "JSON/HTTPS")
+Rel(api, db, "Читает и пишет", "JDBC")
+Rel(api, search, "Ищет", "HTTP")
+Rel(api, bus, "Публикует события", "AMQP")
+Rel(bus, worker, "Доставляет события", "AMQP")
+Rel(worker, db, "Читает сроки, пишет пени", "JDBC")
+Rel(worker, sms, "Отправляет напоминания", "HTTPS")
+Rel(api, rgb, "Импортирует записи", "HTTPS/OAI-PMH")
+Rel(api, sso, "Проверяет учётки", "OIDC")
+
+SHOW_LEGEND()
+@enduml

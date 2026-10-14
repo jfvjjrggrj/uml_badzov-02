@@ -1,0 +1,36 @@
+@startuml
+!include <C4/C4_Component>
+title Уровень 3 — Components: Backend API
+
+Container(spa, "Веб-клиент", "React")
+Container(desk, "АРМ библиотекаря", "Desktop, .NET")
+ContainerDb(db, "Основная БД", "PostgreSQL")
+ContainerDb(search, "Поисковый индекс", "OpenSearch")
+ContainerQueue(bus, "Очередь событий", "RabbitMQ")
+
+Container_Boundary(api, "Backend API") {
+  Component(circCtrl, "CirculationController", "Spring MVC", "REST: выдача, возврат, брони")
+  Component(catCtrl, "CatalogController", "Spring MVC", "REST: каталог, карточки книг")
+  Component(circSvc, "CirculationService", "Kotlin", "Правила выдачи, лимиты, сроки")
+  Component(catSvc, "CatalogService", "Kotlin", "Поиск, карточки книг")
+  Component(fine, "FinePolicy", "Kotlin", "Расчёт пеней за просрочку")
+  Component(pub, "EventPublisher", "Kotlin", "Публикация доменных событий")
+  Component(repo, "JPA Repositories", "Spring Data", "Доступ к данным")
+}
+
+Rel(spa, catCtrl, "GET /books", "JSON/HTTPS")
+Rel(spa, circCtrl, "POST /loans", "JSON/HTTPS")
+Rel(desk, circCtrl, "POST /loans, POST /returns", "JSON/HTTPS")
+
+Rel(circCtrl, circSvc, "вызывает")
+Rel(catCtrl, catSvc, "вызывает")
+Rel(circSvc, fine, "использует")
+Rel(circSvc, pub, "публикует LoanCreated")
+Rel(circSvc, repo, "использует")
+Rel(catSvc, repo, "использует")
+Rel(catSvc, search, "запрашивает", "HTTP")
+Rel(repo, db, "читает и пишет", "JDBC")
+Rel(pub, bus, "отправляет", "AMQP")
+
+SHOW_LEGEND()
+@enduml

@@ -1,0 +1,9 @@
+{
+  "name": "Structurizr Environment",
+  "image": "structurizr/lite",
+  "forwardPorts": [8080],
+  "workspaceFolder": "/usr/local/structurizr",
+  "mounts": [
+    "source=${localWorkspaceFolder}/docs/06-c4,target=/usr/local/structurizr,type=bind,consistency=cached"
+  ]
+}
